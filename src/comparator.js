@@ -112,25 +112,25 @@ export function calculateCssSimilarity(expectedStyles, actualStyles, elementMatc
 
     let elementSimilarity = 100;
 
-    // Compare font-size (tolerance: 2px)
+    // Compare font-size (tolerance: 1px - stricter)
     const fontSizeDiff = Math.abs(expectedStyle.fontSize - actualStyle.fontSize);
-    if (fontSizeDiff > 2) {
-      elementSimilarity -= Math.min(15, fontSizeDiff * 2);
+    if (fontSizeDiff > 1) {
+      elementSimilarity -= Math.min(20, fontSizeDiff * 3);
     }
 
     // Compare font-weight
     if (expectedStyle.fontWeight !== actualStyle.fontWeight) {
-      elementSimilarity -= 5;
+      elementSimilarity -= 7;
     }
 
-    // Compare color (RGB threshold: 30)
+    // Compare color (RGB threshold: 10 - much stricter)
     const colorDiff =
       Math.abs(expectedStyle.color.r - actualStyle.color.r) +
       Math.abs(expectedStyle.color.g - actualStyle.color.g) +
       Math.abs(expectedStyle.color.b - actualStyle.color.b);
 
-    if (colorDiff > 30) {
-      elementSimilarity -= Math.min(20, colorDiff / 5);
+    if (colorDiff > 10) {
+      elementSimilarity -= Math.min(25, colorDiff / 2);
     }
 
     // Compare background color
@@ -139,35 +139,35 @@ export function calculateCssSimilarity(expectedStyles, actualStyles, elementMatc
       Math.abs(expectedStyle.backgroundColor.g - actualStyle.backgroundColor.g) +
       Math.abs(expectedStyle.backgroundColor.b - actualStyle.backgroundColor.b);
 
-    if (bgDiff > 30) {
-      elementSimilarity -= Math.min(20, bgDiff / 5);
+    if (bgDiff > 10) {
+      elementSimilarity -= Math.min(25, bgDiff / 2);
     }
 
     // Compare display
     if (expectedStyle.display !== actualStyle.display) {
-      elementSimilarity -= 10;
+      elementSimilarity -= 15;
     }
 
-    // Compare margin (tolerance: 5px)
+    // Compare margin (tolerance: 3px - stricter)
     const marginDiff =
       Math.abs(expectedStyle.margin.top - actualStyle.margin.top) +
       Math.abs(expectedStyle.margin.right - actualStyle.margin.right) +
       Math.abs(expectedStyle.margin.bottom - actualStyle.margin.bottom) +
       Math.abs(expectedStyle.margin.left - actualStyle.margin.left);
 
-    if (marginDiff > 5) {
-      elementSimilarity -= Math.min(15, marginDiff / 2);
+    if (marginDiff > 3) {
+      elementSimilarity -= Math.min(18, marginDiff / 1.5);
     }
 
-    // Compare padding (tolerance: 5px)
+    // Compare padding (tolerance: 3px - stricter)
     const paddingDiff =
       Math.abs(expectedStyle.padding.top - actualStyle.padding.top) +
       Math.abs(expectedStyle.padding.right - actualStyle.padding.right) +
       Math.abs(expectedStyle.padding.bottom - actualStyle.padding.bottom) +
       Math.abs(expectedStyle.padding.left - actualStyle.padding.left);
 
-    if (paddingDiff > 5) {
-      elementSimilarity -= Math.min(15, paddingDiff / 2);
+    if (paddingDiff > 3) {
+      elementSimilarity -= Math.min(18, paddingDiff / 1.5);
     }
 
     totalSimilarity += Math.max(0, elementSimilarity);
@@ -200,22 +200,22 @@ export function calculateLayoutSimilarity(expectedGeometry, actualGeometry, elem
 
     let elementSimilarity = 100;
 
-    // Compare position (tolerance: 15px before deduction)
+    // Compare position (tolerance: 8px - stricter)
     const xDiff = Math.abs(expectedRect.x - actualRect.x);
     const yDiff = Math.abs(expectedRect.y - actualRect.y);
 
-    if (xDiff > 15 || yDiff > 15) {
+    if (xDiff > 8 || yDiff > 8) {
       mismatchCount++;
-      elementSimilarity -= Math.min(30, Math.max(xDiff, yDiff) / 2);
+      elementSimilarity -= Math.min(35, Math.max(xDiff, yDiff) / 1.5);
     }
 
     // Compare dimensions
     const widthDiff = Math.abs(expectedRect.width - actualRect.width);
     const heightDiff = Math.abs(expectedRect.height - actualRect.height);
 
-    if (widthDiff > 15 || heightDiff > 15) {
+    if (widthDiff > 8 || heightDiff > 8) {
       mismatchCount++;
-      elementSimilarity -= Math.min(30, (widthDiff + heightDiff) / 4);
+      elementSimilarity -= Math.min(35, (widthDiff + heightDiff) / 3);
     }
 
     totalSimilarity += Math.max(0, elementSimilarity);
@@ -229,8 +229,9 @@ export function calculateLayoutSimilarity(expectedGeometry, actualGeometry, elem
 
   let result = totalSimilarity / comparedCount;
 
-  if (mismatchPercentage > 5) {
-    result -= mismatchPercentage * 0.5;
+  // Stronger penalty for layout mismatches (> 3%)
+  if (mismatchPercentage > 3) {
+    result -= mismatchPercentage * 0.7;
   }
 
   return Math.max(0, Math.min(100, result));

@@ -82,121 +82,37 @@ const EXAMPLES = {
 </body>
 </html>`,
 
-  complex: `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Complex Website</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #ffffff;
-    }
-    
-    header {
-      background: linear-gradient(135deg, #0066cc 0%, #004a99 100%);
-      color: white;
-      padding: 60px 20px;
-      text-align: center;
-    }
-    
-    header h1 {
-      font-size: 2.5em;
-      margin-bottom: 10px;
-    }
-    
-    header p {
-      font-size: 1.1em;
-      opacity: 0.95;
-    }
-    
-    .container {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-    
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 24px;
-      margin: 40px 0;
-    }
-    
-    .feature {
-      background: #f8f9fa;
-      padding: 24px;
-      border-radius: 8px;
-      border-left: 4px solid #0066cc;
-    }
-    
-    .feature h3 {
-      color: #0066cc;
-      margin-bottom: 12px;
-    }
-    
-    .feature p {
-      color: #666;
-      line-height: 1.6;
-    }
-    
-    .cta {
-      text-align: center;
-      margin: 40px 0;
-    }
-    
-    button {
-      background-color: #0066cc;
-      color: white;
-      padding: 14px 32px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-    }
-    
-    button:hover {
-      background-color: #0052a3;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Advanced Website</h1>
-    <p>This is a complex example with multiple sections and components</p>
-  </header>
-  
-  <div class="container">
-    <div class="features">
-      <div class="feature">
-        <h3>Feature One</h3>
-        <p>Description of the first feature with detailed information.</p>
-      </div>
-      <div class="feature">
-        <h3>Feature Two</h3>
-        <p>Description of the second feature with detailed information.</p>
-      </div>
-      <div class="feature">
-        <h3>Feature Three</h3>
-        <p>Description of the third feature with detailed information.</p>
-      </div>
+  complex: `// React + TypeScript Component Example
+import React from 'react';
+
+const App: React.FC = () => {
+  const [count, setCount] = React.useState<number>(0);
+
+  return (
+    <div style={{ padding: '40px', fontFamily: 'Arial, sans-serif' }}>
+      <h1 style={{ color: '#0066cc' }}>React Component Example</h1>
+      <p style={{ color: '#666', marginBottom: '24px' }}>
+        This is a React component written in TypeScript
+      </p>
+      <button 
+        onClick={() => setCount(count + 1)}
+        style={{
+          backgroundColor: '#0066cc',
+          color: 'white',
+          padding: '12px 32px',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          fontSize: '16px'
+        }}
+      >
+        Clicked {count} times
+      </button>
     </div>
-    
-    <div class="cta">
-      <h2>Ready to get started?</h2>
-      <button>Get Started Now</button>
-    </div>
-  </div>
-</body>
-</html>`,
+  );
+};
+
+export default App;`,
 };
 
 // DOM Elements
@@ -255,14 +171,7 @@ async function handleEvaluate() {
   }
 
   if (!studentCode) {
-    showError('Please paste your HTML code');
-    return;
-  }
-
-  if (!studentCode.includes('<html') && !studentCode.includes('<body')) {
-    showError(
-      'Please paste valid HTML code. It should contain <html> or <body> tags.'
-    );
+    showError('Please paste your code (HTML, React, or TypeScript)');
     return;
   }
 

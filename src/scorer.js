@@ -24,10 +24,10 @@ export function calculateScores(
   actualStyles,
   elementMatches
 ) {
-  // Layout score (0-20): Based on layout similarity with penalty for > 5% mismatch
+  // Layout score (0-20): Based on layout similarity with stronger penalty for mismatches
   let layoutScore = (layoutSimilarity / 100) * 20;
-  if (layoutSimilarity < 95) {
-    layoutScore = Math.min(15, layoutScore); // Cap at 15 if mismatch > 5%
+  if (layoutSimilarity < 97) {
+    layoutScore = Math.min(12, layoutScore); // Cap lower if mismatch > 3%
   }
 
   // Spacing score (0-20): Based on margin and padding accuracy
@@ -55,13 +55,13 @@ export function calculateScores(
 
     const spacingDiff = marginDiff + paddingDiff;
 
-    // Tolerance: 10px total difference
-    if (spacingDiff <= 10) {
+    // Tolerance: 6px total difference (stricter)
+    if (spacingDiff <= 6) {
       spacingScore += 20;
-    } else if (spacingDiff <= 30) {
-      spacingScore += Math.max(10, 20 - spacingDiff / 2);
+    } else if (spacingDiff <= 20) {
+      spacingScore += Math.max(8, 20 - spacingDiff / 1.5);
     } else {
-      spacingScore += Math.max(0, 20 - spacingDiff / 3);
+      spacingScore += Math.max(0, 20 - spacingDiff / 2.5);
     }
 
     spacingCompares++;
@@ -82,15 +82,15 @@ export function calculateScores(
 
     let typeScore = 20;
 
-    // Font size tolerance: 2px
+    // Font size tolerance: 1px (stricter)
     const fontDiff = Math.abs(expectedStyle.fontSize - actualStyle.fontSize);
-    if (fontDiff > 2) {
-      typeScore -= Math.min(10, fontDiff * 2);
+    if (fontDiff > 1) {
+      typeScore -= Math.min(12, fontDiff * 3);
     }
 
     // Font weight comparison
     if (expectedStyle.fontWeight !== actualStyle.fontWeight) {
-      typeScore -= 5;
+      typeScore -= 7;
     }
 
     typographyScore += Math.max(0, typeScore);
@@ -112,14 +112,14 @@ export function calculateScores(
 
     let cScore = 20;
 
-    // Text color comparison (RGB threshold: 30)
+    // Text color comparison (RGB threshold: 10 - stricter)
     const colorDiff =
       Math.abs(expectedStyle.color.r - actualStyle.color.r) +
       Math.abs(expectedStyle.color.g - actualStyle.color.g) +
       Math.abs(expectedStyle.color.b - actualStyle.color.b);
 
-    if (colorDiff > 30) {
-      cScore -= Math.min(10, colorDiff / 5);
+    if (colorDiff > 10) {
+      cScore -= Math.min(12, colorDiff / 2.5);
     }
 
     // Background color comparison
@@ -128,8 +128,8 @@ export function calculateScores(
       Math.abs(expectedStyle.backgroundColor.g - actualStyle.backgroundColor.g) +
       Math.abs(expectedStyle.backgroundColor.b - actualStyle.backgroundColor.b);
 
-    if (bgDiff > 30) {
-      cScore -= Math.min(10, bgDiff / 5);
+    if (bgDiff > 10) {
+      cScore -= Math.min(12, bgDiff / 2.5);
     }
 
     colorScore += Math.max(0, cScore);
@@ -176,8 +176,8 @@ export function checkHardFailures(
     return 'MISSING_CORE_COMPONENTS';
   }
 
-  // Hard failure 2: Structure similarity < 80%
-  if (structureSimilarity < 80) {
+  // Hard failure 2: Structure similarity < 85% (stricter)
+  if (structureSimilarity < 85) {
     return 'STRUCTURE_SIMILARITY_BELOW_THRESHOLD';
   }
 
@@ -202,8 +202,8 @@ export function checkHardFailures(
         Math.abs(expectedStyle.backgroundColor.g - actualStyle.backgroundColor.g) +
         Math.abs(expectedStyle.backgroundColor.b - actualStyle.backgroundColor.b);
 
-      // Color threshold for CTA: significant difference
-      if (bgDiff > 60) {
+      // Color threshold for CTA: significant difference (stricter)
+      if (bgDiff > 30) {
         ctaColorMismatch = true;
       }
     }
@@ -228,8 +228,8 @@ export function determineFinalVerdict(totalScore, hardFailReason) {
     return 'FAIL';
   }
 
-  // PASS only if total score >= 85 and no hard failure
-  if (totalScore >= 85) {
+  // PASS only if total score >= 90 and no hard failure (stricter)
+  if (totalScore >= 90) {
     return 'PASS';
   }
 
